@@ -178,6 +178,7 @@ glDrawArrays(GL_TRIANGLES, 0, 6);
 >* 程序初始化 init()  
 >* 循环体中执行绘制 display()  
 >* 销毁窗口   
+>* 释放OpenGL资源
 
 ```
 glfw初始化及创建窗口代码;
@@ -191,6 +192,10 @@ while(!glfwWindowShouldClose(window)) {
     glfwSwapBuffers(window);
     glfwPollEvents
 }
+
+// 释放OpenGL资源
+glDeleteVertexArrays(1, &VAO);  
+glDeleteBuffers(1, &VBO);
 
 // glfw 收到关闭窗口消息，执行销毁窗口动作，中止glfw(消息机制等)
 glfwDestroyWindow(window);
@@ -212,7 +217,31 @@ glfwTerminate();
 
 >>>>* 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
 由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，我
-想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象
+想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象  
+
+>>* `glBindVertexArray(VAO);`  
+  
+>>>* API原型：glBindVertexArray(GLuint array)   
+  
+>>>* API解释：如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；否则，意味对之前绑定的顶点数组对象进行解绑定；
+如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
+  
+>>>* 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
+
+
+>>* `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
+
+>>>* API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
+
+>>>* API解释：
+
+
+
+
+
+
+
+
 
 
 
