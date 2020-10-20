@@ -10,8 +10,6 @@
 ### 图元(Primivtives)   
 >* 最小、最简单、不可分割的形状，用于构成3D图形   
 
->* 可选维度：1，2，3  
-
 >* 类型  
 >>1. 点：GL_POINTS，对应一个几何顶点(Vertices)，大小默认一个像素，glPointSize()可改变点大小    
 >>2. 线：GL_LINES，对应一对几何顶点，默认宽度一个像素，glLineWidth()可改变线宽   
@@ -28,7 +26,13 @@
 
 * **渲染**：从模型到生成最终图像的过程  
   
-* **着色器**：为GPU编译的小型程序，渲染阶段处理顶点位置、颜色
+* **着色器**：为GPU编译的小型程序，渲染阶段处理顶点位置、颜色  
+
+* **VAO**：Vertex Array Object，顶点数组对象  
+
+* **VBO**：Vertex Buffer Object，顶点缓冲对象   
+
+* **FBO**：Frame Buffer Object，帧缓冲对象
 
 ## 语法  
 * 函数：gl 前缀  
@@ -43,7 +47,7 @@
 >1.  早期使用的固定管线模式 
 >2.  优点：绘制图形很方便，容易理解、使用
 >3.  缺点：效率太低，控制OpenGL计算的自由度低（OpenGL的大多数功能都被库隐藏起来，难以把握它是如何运行的）
->4.  3.2开始，规范文档开始废弃立此模式 
+>4.  OpenGL3.2开始，规范文档开始废弃立此模式 
 
 * **核心模式**  
 >1.  迫使开发者使用现代的函数，试图使用一个已废弃的函数时，会抛出一个错误并终止绘图
@@ -111,6 +115,129 @@
 >2. 片元通过了所有激活的测试，则被直接绘制到帧缓冲  
 
 >3. 若开启混融(Blending)模式，则片元颜色会与该像素当前颜色相迭加，形成一个新的颜色值并写入帧缓存  
+
+## 通用例程(绘制三角形)
+### 初始化函数 init()  
+>* 设置应用程序用到的数据，如顶点、着色器、纹理  
+>* 着色管线装配（把应用程序数据 和 着色器程序的变量关联起来）
+```
+声明着色器属性位置布局
+enum Attrib_IDs { vPosition = 0 };
+
+// 定义顶点数组
+GLfloat  vertices[6][2] = {
+              { -0.90f, -0.90f }, {  0.85f, -0.90f }, { -0.90f,  0.85f },  // Triangle 1
+              {  0.90f, -0.85f }, {  0.90f,  0.90f }, { -0.85f,  0.90f }   // Triangle 2
+         };
+         
+// 创建并激活着色器程序
+GLuint shaderProgram = LoadShader(shaderInfoObj); // 封装的创建方法着色器方法
+glUseProgram(shaderProgram);
+
+// 声明VAO、VBO
+GLuint VAO, VBO;
+
+// 初始化VAO、VBO
+glGenVertexArrays(1, &VAO);
+glGenBuffers(1, &VBO);
+
+// 绑定VAO、VBO
+glBindVertexArray(VAO);
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+// 上传顶点数据到OpenGL服务端
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, 0);
+
+// 着色管线装配
+glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+glEnableVertexAttribArray(vPosition);
+
+```
+### 绘制函数 display()   
+>* glClear(...) 清屏  
+>* glBind...() 绑定渲染所需的对象(可以有多个VAO, VBO，可以在这个函数中切好绑定的对象，对每一次绑定动作分别执行渲染)  
+>* glDraw...() 开始渲染  
+
+```
+// 设置清屏颜色
+glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+// 执行清屏动作
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+// 绑定需要绘制的VAO（根据需求，可以绑定不同的VAO）
+glBindVertexArray(VAO);
+
+// 开始绘制
+glDrawArrays(GL_TRIANGLES, 0, 6);
+
+```
+
+### 主函数 main()  
+>* 创建窗口 (交给glfw等三方库承担)     
+>* 程序初始化 init()  
+>* 循环体中执行绘制 display()  
+>* 销毁窗口   
+
+```
+glfw初始化及创建窗口代码;
+
+// 程序初始化函数
+init();
+
+// 渲染循环体
+while(!glfwWindowShouldClose(window)) {
+    display();
+    glfwSwapBuffers(window);
+    glfwPollEvents
+}
+
+// glfw 收到关闭窗口消息，执行销毁窗口动作，中止glfw(消息机制等)
+glfwDestroyWindow(window);
+glfwTerminate();
+
+```
+### 例程详解  
+>1. init中各OpenGL API详解  
+>>* `glGenVertexArrays(1, &VAO);`  
+
+>>>* API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
+
+>>>* API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
+
+>>>* 如何理解：  
+>>>>* 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；
+
+>>>>* VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，是一块连续的数组空间，用来接收从应用程序上传过来的顶点数据；  
+
+>>>>* 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
+由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，我
+想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
