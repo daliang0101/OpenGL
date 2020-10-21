@@ -236,7 +236,7 @@ glfwTerminate();
 ```
 ### 例程详解  
 #### init中各OpenGL API详解  
-* `glGenVertexArrays(1, &VAO);`  
+##### `glGenVertexArrays(1, &VAO);`  
 
 > 原型：  
 >    * glGenVertexArrays(GLsizei n, GLuint *arrays)  
@@ -263,7 +263,7 @@ glfwTerminate();
 >
 >        我(应用程序)想与你xxx这个编号的对象通信，之后对该类型执行的操作就会作用于激活(绑定)的对象；    
 
-* `glBindVertexArray(VAO);`  
+##### `glBindVertexArray(VAO);`  
 >
 > 原型：  
 >    * glBindVertexArray(GLuint array)
@@ -284,7 +284,7 @@ glfwTerminate();
 >     2. 与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间；
 
 
-* `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
+##### `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
 
 > 原型：
 >    * glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer); 
