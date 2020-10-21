@@ -2,27 +2,27 @@
 ## 术语  
 ### 顶点(Vertices)
 >* 描述几何图形顶点的数据包（开发者负责定义构成顶点的所有数据）   
-
+>
 >* 数据包中各个分量被称为属性：位置坐标、颜色值、纹理坐标等  
-
+>
 >* OpenGL绘图的原始资料  
 
 ### 图元(Primivtives)   
 >* 最小、最简单、不可分割的形状，用于构成3D图形   
-
+>
 >* 类型  
 >>> 点：GL_POINTS，对应一个几何顶点(Vertices)，大小默认一个像素，glPointSize()可改变点大小    
-
+>>>
 >>> 线：GL_LINES，对应一对几何顶点，默认宽度一个像素，glLineWidth()可改变线宽   
-
+>>>
 >>> 线带：GL_LINE_STRIP，对应一组几何顶点，依次对顶点连线形成，不闭合   
-
+>>>
 >>> 线环：GL_LINE_LOOP，对应一组几何顶点，依次对顶点连线形成，闭合  
-
+>>>
 >>> 三角形：GL_TRIANGLES，对应某三个几何顶点   
-
+>>>
 >>> 三角形带：GL_TRIANGLES_STRIP，共用一个线带(strip)上的顶点的一组三角形（映射纹理图片时常使用该类型）  
-
+>
 >* OpenGL就是把几何顶点组装成这些基本图形，再由基本图形组成目标图形
 
 ### 片元  
@@ -55,18 +55,22 @@
 
 ### 一类功能的函数集
 > 函数开头部分相同，在后缀做小的改变提示参数类型  
-
+>
 > 例：glUniform2f()和glUniform2fv()，2f表示传入2个GLfloat型参数；2fv表示用一个一维GLfloat数组传入2个GLfloat值  
 
 ## 渲染模式  
 ### 立即模式：  
->*  早期使用的固定管线模式 
->*  优点：绘制图形很方便，容易理解、使用
->*  缺点：效率太低，控制OpenGL计算的自由度低（OpenGL的大多数功能都被库隐藏起来，难以把握它是如何运行的）
+>*  早期使用的固定管线模式  
+>
+>*  优点：绘制图形很方便，容易理解、使用  
+>
+>*  缺点：效率太低，控制OpenGL计算的自由度低（OpenGL的大多数功能都被库隐藏起来，难以把握它是如何运行的）  
+>
 >*  OpenGL3.2开始，规范文档开始废弃立此模式 
 
 ### 核心模式
->*  迫使开发者使用现代的函数，试图使用一个已废弃的函数时，会抛出一个错误并终止绘图
+>*  迫使开发者使用现代的函数，试图使用一个已废弃的函数时，会抛出一个错误并终止绘图  
+>
 >*  所有OpenGL的更高的版本都是在3.3的基础上，引入了额外的功能，并没有改动核心架构  
 >*  新版本只是引入了一些更有效率或更有用的方式去完成同样的功能  
 >*  所有的概念和技术在现代OpenGL版本里都保持一致  
@@ -195,9 +199,13 @@ glDrawArrays(GL_TRIANGLES, 0, 6);
 
 ### 主函数 main()  
 >* 创建窗口 (交给glfw等三方库承担)     
+>
 >* 程序初始化 init()  
+>
 >* 循环体中执行绘制 display()  
+>
 >* 销毁窗口   
+>
 >* 释放OpenGL资源
 
 ```
@@ -225,34 +233,34 @@ glfwTerminate();
 ### 例程详解  
 #### init中各OpenGL API详解  
 > `glGenVertexArrays(1, &VAO);`  
-
+>
 >> API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
-
+>>
 >> API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
-
+>>
 >> 如何理解：  
 >>> 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；
-
+>>>
 >>> VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，是一块连续的数组空间，用来接收从应用程序上传过来的顶点数据；  
-
+>>>
 >>> 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
 由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，我
 想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象  
 
 > `glBindVertexArray(VAO);`  
-  
+>
 >> API原型：glBindVertexArray(GLuint array)   
-  
+>>
 >> API解释：如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；否则，意味对之前绑定的顶点数组对象进行解绑定；
 如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
-  
+>>  
 >> 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
 
 
 > `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
 
 >> API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
-
+>>
 >> API解释：
 
 
