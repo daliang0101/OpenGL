@@ -242,11 +242,9 @@ glfwTerminate();
 >    * glGenVertexArrays(GLsizei n, GLuint *arrays)  
 >  
 > 解释：  
->   * 返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误 
+>   * 返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误   
 >
-> 理解：  
->
->
+>    * 理解：
 >     1. 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；  
 >
 >     2. VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，    
