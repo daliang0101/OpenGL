@@ -238,12 +238,12 @@ glfwTerminate();
 #### init中各OpenGL API详解  
 * `glGenVertexArrays(1, &VAO);`  
 
-> API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
-
+> API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)   
+>  
 > API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
-
+>
 > 如何理解：  
-
+>
 >     1. 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；  
 >
 >     2. VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，    
@@ -262,19 +262,27 @@ glfwTerminate();
 
 * `glBindVertexArray(VAO);`  
 >
->> API原型：glBindVertexArray(GLuint array)   
->>
->> API解释：如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；否则，意味对之前绑定的顶点数组对象进行解绑定；
-如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
->>  
->> 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
+> API原型：glBindVertexArray(GLuint array)   
+>
+> API解释：  
+>    如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；  
+>  
+>    否则，意味对之前绑定的顶点数组对象进行解绑定；
+>  
+>    如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
+>
+> 如何理解：  
+>
+>     类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；  
+>  
+>     与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间；
 
 
 * `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
 
->> API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
->>
->> API解释：
+> API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
+>
+> API解释：
 
 
 
