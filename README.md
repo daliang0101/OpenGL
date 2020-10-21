@@ -269,11 +269,12 @@ glfwTerminate();
 >    * glBindVertexArray(GLuint array)
 >
 > 解释：  
->    1. 如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；  
+>
+>     1. 如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；  
 >  
->    2. 如果array为0，意味对之前绑定的顶点数组对象进行解绑定；
+>     2. 如果array为0，意味对之前绑定的顶点数组对象进行解绑定；
 >  
->    3. 如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
+>     3. 如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
 >  
 >  
 > 理解：  
