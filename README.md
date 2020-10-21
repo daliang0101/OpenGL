@@ -239,10 +239,10 @@ glfwTerminate();
 * `glGenVertexArrays(1, &VAO);`  
 
 > 原型：  
->    1. glGenVertexArrays(GLsizei n, GLuint *arrays)  
+>    * glGenVertexArrays(GLsizei n, GLuint *arrays)  
 >  
 > 解释：  
->   1. 返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误 
+>   * 返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误 
 >
 > 理解：  
 >
@@ -271,7 +271,7 @@ glfwTerminate();
 > 解释：  
 >    1. 如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；  
 >  
->    2. 否则，意味对之前绑定的顶点数组对象进行解绑定；
+>    2. 如果array为0，意味对之前绑定的顶点数组对象进行解绑定；
 >  
 >    3. 如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
 >
