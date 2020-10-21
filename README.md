@@ -57,18 +57,18 @@
 >*  更高的灵活性和效率，可以更深入的理解图形编程(学习难度大)  
 
 ## 状态机  
-* 一系列的变量，描述OpenGL此刻应当如何运行  
+> 一系列的变量，描述OpenGL此刻应当如何运行  
 
-* OpenGL本质是一个巨大的状态机   
+> OpenGL本质是一个巨大的状态机   
 
-* OpenGL的状态通常被称为OpenGL上下文(Context)   
+> OpenGL的状态通常被称为OpenGL上下文(Context)   
 
-* 更改OpenGL状态的途径：设置选项，操作缓冲，使用当前OpenGL上下文来渲染  
+> 更改OpenGL状态的途径：设置选项，操作缓冲，使用当前OpenGL上下文来渲染  
 
 ## 扩展  
-* OpenGL的一大特性就是对扩展(Extension)的支持 
+> OpenGL的一大特性就是对扩展(Extension)的支持 
 
-* 当一个显卡公司提出一个新特性或者渲染上的大优化，通常会以扩展的方式在驱动中实现  
+> 当一个显卡公司提出一个新特性或者渲染上的大优化，通常会以扩展的方式在驱动中实现  
 ```
     if(GL_ARB_extension_name) {
         // 使用硬件支持的全新的现代特性
@@ -111,11 +111,11 @@
 >>* 片元着色使用位置信息来决定片元的颜色
 
 >* 逐片元操作  
->>* 进行深度、模版测试，来决定一个片元是否可见  
+>>1. 进行深度、模版测试，来决定一个片元是否可见  
 
->>* 片元通过了所有激活的测试，则被直接绘制到帧缓冲  
+>>2. 片元通过了所有激活的测试，则被直接绘制到帧缓冲  
 
->>* 若开启混融(Blending)模式，则片元颜色会与该像素当前颜色相迭加，形成一个新的颜色值并写入帧缓存  
+>>3. 若开启混融(Blending)模式，则片元颜色会与该像素当前颜色相迭加，形成一个新的颜色值并写入帧缓存  
 
 ## 通用例程(绘制三角形)
 ### 初始化函数 init()  
@@ -206,37 +206,37 @@ glfwTerminate();
 
 ```
 ### 例程详解  
->1. init中各OpenGL API详解  
->>* `glGenVertexArrays(1, &VAO);`  
+#### init中各OpenGL API详解  
+> `glGenVertexArrays(1, &VAO);`  
 
->>>* API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
+>> API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
 
->>>* API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
+>> API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
 
->>>* 如何理解：  
->>>>* 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；
+>> 如何理解：  
+>>> 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；
 
->>>>* VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，是一块连续的数组空间，用来接收从应用程序上传过来的顶点数据；  
+>>> VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，是一块连续的数组空间，用来接收从应用程序上传过来的顶点数据；  
 
->>>>* 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
+>>> 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
 由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，我
 想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象  
 
->>* `glBindVertexArray(VAO);`  
+> `glBindVertexArray(VAO);`  
   
->>>* API原型：glBindVertexArray(GLuint array)   
+>> API原型：glBindVertexArray(GLuint array)   
   
->>>* API解释：如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；否则，意味对之前绑定的顶点数组对象进行解绑定；
+>> API解释：如果array非0且是由glGenVertexArrays()返回的，则激活顶点数组对象array；否则，意味对之前绑定的顶点数组对象进行解绑定；
 如果array不是glGenVertexArrays()返回的，或者已被glDeleteVertexArrays()释放掉了，会产生一个GL_INVALID_OPERATION错误；  
   
->>>* 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
+>> 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
 
 
->>* `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
+> `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
 
->>>* API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
+>> API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
 
->>>* API解释：
+>> API解释：
 
 
 
