@@ -26,7 +26,8 @@
 * OpenGL就是把几何顶点组装成这些基本图形，再由基本图形组成目标图形
 
 ### 片元  
-> 可以视为“候选像素”(即可以存放到帧缓冲的像素)，光栅化阶段图元被分割映射到与屏幕像素对应的一个个片段
+>* 可以视为“候选像素”(即可以存放到帧缓冲的像素)，光栅化阶段图元被分割映射到与屏幕像素对应的一个个片段  
+>* 包含GL渲染一个像素所需的所有数据
   
 ### 像素  
 > 显示器上最小的可见单元
@@ -35,7 +36,50 @@
 > 从模型到生成最终图像的过程  
   
 ### 着色器
-> 为GPU编译的小型程序，渲染阶段处理顶点位置、颜色 
+> 为GPU编译的小型程序，渲染阶段处理顶点位置、颜色  
+
+### 对象
+>* GL一些选项的集合，代表GL状态的一个子集  
+>* GL内核是C库，一些结构不易被翻译到其他高级语言，就在GL中引入了一些抽象层，“对象”是其中一个  
+>* 如：可以用一个“对象”代表绘制窗口的设置，对其进行大小、颜色位数等设置  
+>* 可以被看作一个C结构体 
+```
+struct object_name {
+    GLfloat option1;
+    GLfloat option2;
+    GLchar name[];
+}
+```
+>* GL基元类型(Primitive Type)：C风格类型前面加"GL"前缀，GL基元类型的内存布局是与平台无关的，而int等基元类型在不同操作系统上可能有不同的内存布局。使用GL基元类型可以保证程序在不同的平台上工作一致
+>* GL状态(上下文)与对象之间关系大概如下
+```
+struct OpenGL_Context 
+{
+    ...
+    object* object_Window_Target;
+    object* object_Buffer_Target;
+    ...     
+};
+```
+>* GL对象使用常见工作流  
+```
+// 创建对象：用一个id保存对象的引用(实际数据存储在GL服务端，即显存空间)
+GLuint objectId = 0;
+glGenObject(1, &objectId);
+
+// 绑定对象至上下文目标位置（目标位置理解位主“干道”，对象理解成很多可以连接到“干道”的“岔道”）；
+// 绑定之后，再对目标位置进行的操作，就会作用在绑定到它上面的的对象，即“信息流”会流向与主干到连接的岔道；
+glBindObject(GL_WINDOW_TARGET, objectId);
+
+// 设置当前绑定到 GL_WINDOW_TARGET 的对象的一些选项
+glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_WIDTH, 800);
+glSetObjectOption(GL_WINDOW_TARGET, GL_OPTION_WINDOW_HEIGHT, 600);
+
+// 将上下文对象设回默认(不与任何岔道连接)
+glBindObject(GL_WINDOW_TARGET, 0);
+```
+>* 使用“对象”的好处：可以定多个对象，每个对象有给予不同的设置。执行GL状态操作时，只需绑定符合所需设置的对象
+
 
 ### VAO
 > Vertex Array Object，顶点数组对象
@@ -284,12 +328,43 @@ glfwTerminate();
 >     2. 与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间；
 
 
-##### `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
+##### `glGenBuffers(1, &VBO);`  
 
 > 原型：
->    * glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer); 
+>    * void glGenBuffers(	GLsizei n, 	GLuint * buffers);
 >
-> 解释：
+>
+> 解释：   
+>    1. 返回n个未使用的缓存对象名称，保存到buffers数组； 
+>
+>    2. n < 0，产生GL_INVALID_VALUE错误；  
+>
+>    3. 永远不会返回0，0是保留的缓存对象名称；  
+>
+>
+> 理解：  
+>    1. 缓存对象名称VBO：glGenBuffers函数创建一个缓存对象，并把一个标识它的GLuint型值返回到buffers中，可理解为是一个操作缓存对象的句柄；  
+>
+>    2. 缓存对象是GL服务端分配和管理的一块存储空间（显存）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
