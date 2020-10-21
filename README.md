@@ -239,19 +239,28 @@ glfwTerminate();
 * `glGenVertexArrays(1, &VAO);`  
 
 > API原型：glGenVertexArrays(GLsizei n, GLuint *arrays)  
->
+
 > API解释：返回n个未使用的对象名到数组arrays中，作为顶点数组对象使用，若n<0，产生GL_INVALID_VALUE错误  
->
+
 > 如何理解：  
->   与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；
 
->   VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，是一块连续的数组空间，用来接收从应用程序上传过来的顶点数据；  
+>     1. 与C语言内存分配返回指针类似，这里只不过是分配OpenGL服务端空间(显存空间)，同样返回一个指向显存空间的指针，赋给VAO变量；  
+>
+>     2. VAO代表了一块特定类型的显存空间，这个类型从API名称(VertexArrays)可以看出，    
+>
+>        是一块连续的数组空间，用来接收从应用程序传送过来的顶点数据；  
+>
+>     3. 从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象的API，  
+>  
+>        就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我；
+>         
+>        由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，  
+>
+>        必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，
+>
+>        我(应用程序)想与你xxx这个编号的对象通信，之后对该类型执行的操作就会作用于激活(绑定)的对象；    
 
->   从OpenGL状态机理解，对象代表了状态机中的各种状态，客户端调用OpenGL创建对象API，就是告诉OpenGL服务端：我需要一定数量某种状态对象，把它们的编号分配给我。
->   由于同一类型的对象可以有很多，客户端如果要对某种类型的对象执行操作(如上传顶点数据、纹理贴图)，必须使用glBind...命令激活指定的对象，也就是告诉OpenGL服务端，我
->   想与你xxx这个编号的对象通信，之后该类型执行的操作就会作用于激活(绑定)的对象  
-
-> `glBindVertexArray(VAO);`  
+* `glBindVertexArray(VAO);`  
 >
 >> API原型：glBindVertexArray(GLuint array)   
 >>
@@ -261,7 +270,7 @@ glfwTerminate();
 >> 如何理解：类似铁路道岔开关，各岔道就是某一类型的各个对象，列车就是客户端-服务端之间传递的某类型的数据；与哪条岔道连接，列车就驶向哪条岔到，也就是数据会流向那个对象指向的显存空间  
 
 
-> `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
+* `glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);`  
 
 >> API原型：glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid \*pointer);  
 >>
